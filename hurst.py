@@ -14,13 +14,13 @@ def hurst(series, lags=range(2, 20)):
 def classify(h):
     if h < 0.45:
         return "mean-reverting"
-    elif h < 0.55:
+    elif h > 0.55:
         return "trending"
     return "random walk"
 
 def diffusion_regime(h):
     if h < 0.45:
         return "subdiffusive"
-    elif h < 0.55:
+    elif h > 0.55:
         return "superdiffusive"
     return "normal (Brownian)"
