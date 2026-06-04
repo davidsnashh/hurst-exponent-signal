@@ -1,4 +1,6 @@
 import numpy as np
+import math
+
 def hurst(series, lags=range(2, 20)):
     lags = np.array(list(lags))
     msd = np.array([np.var(series[lag:] - series[:-lag]) for lag in lags]) #msd = mean squared displacement, tracks how far a system wanders from the start over time
