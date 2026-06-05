@@ -13,7 +13,7 @@ def diffusion(series, lags=range(2, 20)):
     msd_curve = msd(series, lags)
     H = slope_h(lags, msd_curve)
 
-    rng = np.random.random()
+    rng = np.random.default_rng(0)
     steps = np.diff(series)
     block = 20
     n_blocks = max(1, len(steps) // block)
@@ -41,5 +41,5 @@ def tail_stats(returns):
     return {"excess_kurtosis": excess_kurtosis,"worst_sigma": worst, "gbm_years": gbm_years}
 
 def vol_clustering(returns, lag=1):
-    size = np.abs(returns.max() - returns.min())
+    size = np.abs(returns)
     return float(np.corrcoef(size[lag:], size[:-lag])[0,1])
