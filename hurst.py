@@ -1,28 +1,22 @@
 import numpy as np
 import math
 
-def hurst(series, lags=range(2, 20)):
+def msd(series, lags):
+    return np.array([np.var(series[lag:] - series[:-lag]) for lag in lags])
+
+def slope_h(lags, msd_values):
+    return np.polyfit(np.log(lags), np.log(msd_values), deg=1)[0] / 2.0
+
+def diffusion(series, lags=range(2, 20)):
+    series = np.asarray(series, dtype=float).flatten()
     lags = np.array(list(lags))
-    msd = np.array([np.var(series[lag:] - series[:-lag]) for lag in lags]) #msd = mean squared displacement, tracks how far a system wanders from the start over time
+    msd_curve = msd(series, lags)
+    H = slope_h(lags, msd_curve)
 
-    log_lag, log_msd = np.log(lags), np.log(msd)
-    slope, intercept = np.polyfit(log_lag, log_msd, 1) #fits a line by least squares
-    h = slope / 2.0
-
-    model = slope * log_lag + intercept
-    r2 = 1.0 - np.sum((log_msd - model) ** 2) / np.sum((log_msd - log_msd.mean()) ** 2)
-    return h, r2
-
-def classify(h):
-    if h < 0.45:
-        return "mean-reverting"
-    elif h > 0.55:
-        return "trending"
-    return "random walk"
-
-def diffusion_regime(h):
-    if h < 0.45:
-        return "subdiffusive"
-    elif h > 0.55:
-        return "superdiffusive"
-    return "normal (Brownian)"
+    random = np.random.random()
+    steps = np.diff(series)
+    block = 20
+    n_blocks = max(1, len(steps) // block)
+    boot = []
+    for _ in range(200):
+        idx = rng.integers(0, n_blocks, n_blocks)
