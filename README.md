@@ -28,4 +28,4 @@ streamlit run app.py
 ```
 ---
 
-built by David Nash, math + physics @BU
+David Nash, math + physics @BU
